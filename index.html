@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bil responde</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #f3f3f3, #e0e0e0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      width: 80px;
+      border-radius: 50%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00a859;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #008047;
+    }
+
+    .resposta {
+      margin-top: 20px;
+      background-color: #f7f7f7;
+      padding: 15px;
+      border-radius: 8px;
+      color: #444;
+      white-space: pre-wrap;
+    }
+
+    .assinatura {
+      font-style: italic;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: right;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://i.imgur.com/eY9ITyE.png" alt="Bil avatar">
+    </div>
+    <h2>📡 Fale com o Bil</h2>
+    <input type="text" id="pergunta" placeholder="Digite sua pergunta..." />
+    <button onclick="enviarPergunta()">Perguntar</button>
+    <div class="resposta" id="resposta"></div>
+    <div class="assinatura">Resposta gerada por Bil, seu assistente inteligente 🤖</div>
+  </div>
+
+  <script>
+    async function enviarPergunta() {
+      const pergunta = document.getElementById('pergunta').value;
+      const respostaEl = document.getElementById('resposta');
+      
+      if (!pergunta.trim()) {
+        respostaEl.textContent = '⚠️ Por favor, digite uma pergunta antes de enviar.';
+        return;
+      }
+
+      respostaEl.textContent = '⌛ Bil está pensando...';
+
+      try {
+        const resp = await fetch('http://localhost:5678/webhook/bil', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pergunta })
+        });
+
+        const data = await resp.json();
+        respostaEl.textContent = data.bil || data.resposta || '🤷 Bil não conseguiu responder essa...';
+      } catch (err) {
+        respostaEl.textContent = '❌ Erro ao falar com o Bil: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
