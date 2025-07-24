@@ -154,7 +154,7 @@
       chatBox.scrollTop = chatBox.scrollHeight;
 
       try {
-        const resp = await fetch('http://host.docker.internal:5678/webhook/bil', {
+        const resp = await fetch('http://localhost:5678/webhook/bil', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pergunta })
