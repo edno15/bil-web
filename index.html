@@ -127,6 +127,7 @@
     async function enviarPergunta() {
       const pergunta = document.getElementById('pergunta').value.trim();
       const chatBox = document.getElementById('chatBox');
+
       if (!pergunta) {
         const aviso = document.createElement('div');
         aviso.className = 'msg';
@@ -136,14 +137,16 @@
         return;
       }
 
-      // Mostrar pergunta no histórico
+      // Log no console para debug
+      console.log("Enviando pergunta ao Bil:", pergunta);
+
+      // Mostra pergunta do usuário
       const userDiv = document.createElement('div');
       userDiv.className = 'msg user-msg';
       userDiv.textContent = "🧑‍💬 Você: " + pergunta;
       chatBox.appendChild(userDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
 
-      // Mostrar Bil pensando
+      // Bil pensando...
       const pensandoDiv = document.createElement('div');
       pensandoDiv.className = 'msg';
       pensandoDiv.textContent = '🤖 Bil está pensando...';
@@ -151,21 +154,24 @@
       chatBox.scrollTop = chatBox.scrollHeight;
 
       try {
-        const resp = await fetch('http://localhost:5678/webhook/bil', {
+        const resp = await fetch('http://host.docker.internal:5678/webhook/bil', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pergunta })
         });
 
         const data = await resp.json();
+        console.log("Resposta recebida do Bil:", data);
+
         pensandoDiv.textContent = "📣 Bil: " + (data.bil || data.resposta || '🤷 Bil não conseguiu responder essa...');
         chatBox.scrollTop = chatBox.scrollHeight;
-
         document.getElementById('pergunta').value = ''; // limpa campo
       } catch (err) {
+        console.error("Erro ao enviar requisição:", err);
         pensandoDiv.textContent = '❌ Erro ao falar com o Bil: ' + err.message;
       }
     }
   </script>
 </body>
 </html>
+
